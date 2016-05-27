@@ -1,6 +1,10 @@
 
 div#tank {
-  
+  width: 69px;
+  height: 69px;
+  background-image: url("../img/tank_up.gif");
+
+  transition: all 0.2s ease-out 0s;
 
   position: absolute;
   top: 0px;
