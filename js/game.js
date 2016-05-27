@@ -24,7 +24,7 @@ function Game() {
     "background-color": "orange"
   });
 
-  this._battlefield = new Battlefield(700, 700);
+  this._battlefield = new Battlefield(600, 600);
   var pos = this._battlefield.getStartPosition(TANK_DIMS.WIDTH, TANK_DIMS.HEIGHT);
 
   // init position and // callback to check if move is possible

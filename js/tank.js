@@ -89,7 +89,7 @@ Tank.prototype.move = function (dir) {
   switch (dir) {
     case DIRECTION.UP:
       dirStr = "top";
-      moveDist *= -1;
+      moveDist *= -2;
       break;
     case DIRECTION.DOWN:
       dirStr = "top";
@@ -103,7 +103,7 @@ Tank.prototype.move = function (dir) {
   }
 
   setTimeout(function() {
-    $("#tank").css("url('./img/tank_up.gif')");;
+    $("#tank").css("url('./img/tank_up_move.gif')");;
   }, 400);
 
   if(this._battlefield.canMove(left, top, dir, moveDist)) {
