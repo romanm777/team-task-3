@@ -48,3 +48,83 @@ Tank.prototype.directionData = function (dir) {
 
   return data;
 }
+
+Tank.prototype.turn = function (dir) {
+  var oldDir = this._dir;
+  this._dir = dir;
+
+//var dirData = this.directionData();
+//this._tank.css('background-image', dirData.staticPic);
+}
+
+Tank.prototype.getDir = function () {
+  return this._dir;
+}
+
+Tank.prototype.move = function (dir) {
+  var oldDir = this._dir;
+
+  // turns tank
+  this.turn(dir);
+
+  // if tank has turned - return
+  if(dir != oldDir)
+    return;
+
+  var dirStr,
+      moveDist = 5;
+
+  switch (dir) {
+    case DIRECTION.UP:
+      dirStr = "top";
+      moveDist *= -1;
+      break;
+    case DIRECTION.RIGHT:
+      dirStr = "left";
+      break;
+    case DIRECTION.DOWN:
+      dirStr = "top";
+      break;
+    case DIRECTION.LEFT:
+      dirStr = "left";
+      moveDist *= -1;
+      break;
+    default:
+      dirStr = "top"
+  }
+};
+
+Tank.prototype._calcTurn = function (oldDir, dir) {
+  var turnCoef = dir - oldDir;
+
+  // 0
+  if(oldDir == 0 && dir == 3) {
+    turnCoef = -1;
+  }
+  else if(oldDir == 0 && dir == -3) {
+    turnCoef = 1;
+  }
+
+  // 1
+  if(oldDir == 1) {
+    switch (dir) {
+      case 0:
+        turnCoef = -0;
+        break;
+      case 1:
+        turnCoef = 1;
+        break;
+      case 2:
+        turnCoef = 2;
+        break;
+      case 3:
+        turnCoef = -1;
+        break;
+      default:
+
+    }
+  }
+
+
+  return 90 * turnCoef;
+}
