@@ -42,12 +42,12 @@ Game.prototype.onKeyDown = function (e) {
   else if (e.keyCode == KEYCODE_RIGHT) {
     rotate(tank, DIRECTION.RIGHT);
     move(tank, DIRECTION.RIGHT);
-  	tank.style.left = (parseInt(tank.style.left) + 10) + 'px';
+  	tank.style.left = (parseInt(tank.style.left)) + 'px';
   }
   else if (e.keyCode == KEYCODE_UP) {
     rotate(tank, DIRECTION.UP);
     move(tank, DIRECTION.UP);
-    tank.style.top = (parseInt(tank.style.top) - 10) + 'px';
+    tank.style.top = (parseInt(tank.style.top)) + 'px';
   }
   else if (e.keyCode == KEYCODE_DOWN) {
     rotate(tank, DIRECTION.DOWN);
