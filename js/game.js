@@ -57,8 +57,8 @@ Game.prototype.onKeyDown = function (e) {
 }
 
 Game.prototype.onKeyUp = function () {
-  //var tank = $("#tank");
+  var tank = $("#tank");
 
-  // var curDir = tankObj.getDir();
-  // tank.css({'background-image' : curDir.staticPic});
+  var curDir = tankObj.getDir();
+  tank.css({'background-image' : curDir.staticPic});
 }

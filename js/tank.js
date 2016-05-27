@@ -15,6 +15,18 @@ var TANK_DIMS = {
 }
 
 function Tank(startPos, battlefield) {
+  var tank = $("<div>", {id: "tank"});
+  tank.css({
+    "widht": TANK_DIMS.WIDTH + "px",
+    "height": TANK_DIMS.HEIGHT + "px",
+    "background-image": "url('./img/tank_up.gif')",
+    "transition": "all 0.1s ease-out 0s",
+    "position": "relative",
+    "top": startPos.top + "px",
+    "left": startPos.left + "px"
+  });
+
+  $("#" + startPos.id).append(tank);
 
   this._dir = DIRECTION.UP;
 
@@ -53,12 +65,12 @@ Tank.prototype.turn = function (dir) {
   var oldDir = this._dir;
   this._dir = dir;
 
+  // if there is the same direction - don't rotate
+  if(oldDir != dir) {
+    $("#tank").css('transform', 'rotate('+ this._calcTurn(oldDir, dir) + 'deg)');
+  }
 //var dirData = this.directionData();
 //this._tank.css('background-image', dirData.staticPic);
-}
-
-Tank.prototype.getDir = function () {
-  return this._dir;
 }
 
 Tank.prototype.move = function (dir) {
@@ -79,9 +91,6 @@ Tank.prototype.move = function (dir) {
       dirStr = "top";
       moveDist *= -1;
       break;
-    case DIRECTION.RIGHT:
-      dirStr = "left";
-      break;
     case DIRECTION.DOWN:
       dirStr = "top";
       break;
@@ -91,6 +100,16 @@ Tank.prototype.move = function (dir) {
       break;
     default:
       dirStr = "top"
+  }
+
+  setTimeout(function() {
+    $("#tank").css("url('./img/tank_up.gif')");;
+  }, 400);
+
+  if(this._battlefield.canMove(left, top, dir, moveDist)) {
+    $("#tank").css(dirStr, function(index) {
+      return (parseInt($("#tank").css(dirStr)) + moveDist) + 'px';
+    });
   }
 };
 
@@ -125,6 +144,45 @@ Tank.prototype._calcTurn = function (oldDir, dir) {
     }
   }
 
+  // 2
+  if(oldDir == 2) {
+    switch (dir) {
+      case 0:
+        turnCoef = 0;
+        break;
+      case 1:
+        turnCoef = 1;
+        break;
+      case 2:
+        turnCoef = 2;
+        break;
+      case 3:
+        turnCoef = -1;
+        break;
+      default:
+
+    }
+  }
+
+  // 3
+  if(oldDir == 3) {
+    switch (dir) {
+      case 0:
+        turnCoef = 0;
+        break;
+      case 1:
+        turnCoef = 1;
+        break;
+      case 2:
+        turnCoef = -2;
+        break;
+      case 3:
+        turnCoef = -1;
+        break;
+      default:
+
+    }
+  }
 
   return 90 * turnCoef;
 }
