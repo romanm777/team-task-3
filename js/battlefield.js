@@ -64,3 +64,33 @@ Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
 
   return true;
 }
+
+Battlefield.prototype.pixelsToPercentsHor = function (pixels) {
+  var pos = $("#battlefield").position();
+
+  // horizontal
+  var perInPxHor = this._leftPerc / pos.left;
+  var pxInPerHor = pos.left / this._leftPerc;
+
+  return perInPxHor * pixels;
+}
+
+Battlefield.prototype.pixelsToPercentsVer = function (pixels) {
+  var pos = $("#battlefield").position();
+
+  // vertical
+  var perInPxVer = this._topPerc / pos.top;
+  var pxInPerVer = pos.top / this._topPerc;
+
+  return perInPxVer * pixels;
+}
+
+Battlefield.prototype.percentsToPixelsHor = function (percents) {
+  var pos = $("#battlefield").position();
+
+  // horizontal
+  var perInPxHor = this._leftPerc / pos.left;
+  var pxInPerHor = pos.left / this._leftPerc;
+
+  return pxInPerHor * percents;
+}
