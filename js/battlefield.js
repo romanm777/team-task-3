@@ -94,3 +94,29 @@ Battlefield.prototype.percentsToPixelsHor = function (percents) {
 
   return pxInPerHor * percents;
 }
+
+attlefield.prototype.isTankInRect = function (wall, left, top, width, height) {
+  if(this.isPointInRect(wall, left, top)
+  || this.isPointInRect(wall, left + width, top)
+  || this.isPointInRect(wall, left, top + height)
+  || this.isPointInRect(wall, left + width, top + height)) {
+    return true;
+  }
+
+  return false;
+}
+
+Battlefield.prototype.isPointInRect = function (wall, left, top) {
+  wall.width;
+  wall.height;
+  // var leftPx = this.percentsToPixelsHor(wall.leftPerc);
+  // var topPx = this.percentsToPixelVer(wall.topPerc);
+
+
+  if((top > wall.top && top < wall.top + wall.height)
+    && (left > wall.left && left < wall.left + wall.width)) {
+    return true;
+  }
+
+  return false;
+}
