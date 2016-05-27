@@ -174,10 +174,10 @@ Tank.prototype._calcTurn = function (oldDir, dir) {
         turnCoef = 1;
         break;
       case 2:
-        turnCoef = -2;
+        turnCoef = 2;
         break;
       case 3:
-        turnCoef = -1;
+        turnCoef = 1;
         break;
       default:
 

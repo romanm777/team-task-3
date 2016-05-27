@@ -28,7 +28,7 @@ Battlefield.prototype.getStartPosition = function (tankWidth, tankHeight) {
   this._tankWidth = tankWidth;
   this._tankHeight = tankHeight;
 
-  var leftPos = this._width / 2 + this._tankWidth / 2;
+  var leftPos = this._width / 2;
   var topPos = this._height - this._tankHeight;
 
   return {
@@ -38,7 +38,7 @@ Battlefield.prototype.getStartPosition = function (tankWidth, tankHeight) {
   };
 }
 
-Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
+Battlefield.prototype.canMove = function(leftStr, offset) {
   var left = parseInt(leftStr);
   var top = parseInt(topStr);
 
@@ -50,13 +50,13 @@ Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
       }
       break;
     case DIRECTION.RIGHT:
-      var newRight = left + this._tankWidth + offset;
+      var newRight = this._tankWidth + offset;
       if(newRight > this._width) {
         return false;
       }
       break;
     case DIRECTION.DOWN:
-      var newDown = top + this._tankHeight + offset;
+      var newDown = this._tankHeight + offset;
       if(newDown > this._height)) {
         return false;
       }
