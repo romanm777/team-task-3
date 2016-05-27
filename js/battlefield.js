@@ -6,8 +6,8 @@ function Battlefield(width, height) {
   this._height = height;
   //this._walls = new Walls();
 
-  this._left = 200;
-  this._top = 50;
+  this._left = 203;
+  this._top = 52;
 
   this._battlefield = $("<div>", {id: "battlefield"});
   this._battlefield.css({

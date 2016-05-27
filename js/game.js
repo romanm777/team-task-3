@@ -36,7 +36,7 @@ Game.prototype.onKeyDown = function (e) {
     rotate(tank, DIRECTION.LEFT);
     move(tank, DIRECTION.LEFT);
     tank.css("left", function(index) {
-      return (parseInt(tank.css("left")) - 10) + 'px';
+      return (parseInt(tank.css("left")) + 20) + 'px';
     });
   }
   else if (e.keyCode == KEYCODE_RIGHT) {
@@ -52,7 +52,7 @@ Game.prototype.onKeyDown = function (e) {
   else if (e.keyCode == KEYCODE_DOWN) {
     rotate(tank, DIRECTION.DOWN);
     move(tank, DIRECTION.DOWN);
-    tank.style.top = (parseInt(tank.style.top) + 10) + 'px';
+    tank.style.top = (parseInt(tank.style.top) - 10) + 'px';
   }
 }
 
