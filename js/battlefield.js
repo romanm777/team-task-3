@@ -81,20 +81,23 @@ Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
 }
 
 Battlefield.prototype.makeTestRoads = function () {
+  var blockWidth = 60;
+  var blockHeight = 60;
+
   var pos = $("#battlefield").position();
 
   for(var i = 0; i < 4; ++i) {
-    this.createWall(69, 69, 70 * i, 72);
+    this.createWall(blockWidth, blockHeight, 60 * 0, blockHeight + 4);
   }
 
   for(var i = 0; i < 4; ++i) {
-    this.createWall(69, 69, 630 - 70 * i, 72);
+    this.createWall(blockWidth, blockHeight, 640 - blockWidth * i, blockHeight + 4);
   }
 
-  this.createWall(70, 70, 180, 200);
-  this.createWall(70, 70, 250, 200);
-  this.createWall(70, 70, 250, 270);
-  this.createWall(70, 70, this._width - 70, this._height - 70);
+  this.createWall(blockWidth, blockHeight, 180, 200);
+  this.createWall(blockWidth, blockHeight, 240, 200);
+  this.createWall(blockWidth, blockHeight, 240, 260);
+  this.createWall(blockWidth, blockHeight, this._width - blockWidth, this._height - blockHeight);
 }
 
 Battlefield.prototype.createWall = function (width, height, left, top) {
@@ -122,46 +125,6 @@ Battlefield.prototype.createWall = function (width, height, left, top) {
   });
 }
 
-Battlefield.prototype.pixelsToPercentsHor = function (pixels) {
-  var pos = $("#battlefield").position();
-
-  // horizontal
-  var perInPxHor = this._leftPerc / pos.left;
-  var pxInPerHor = pos.left / this._leftPerc;
-
-  return perInPxHor * pixels;
-}
-
-Battlefield.prototype.pixelsToPercentsVer = function (pixels) {
-  var pos = $("#battlefield").position();
-
-  // vertical
-  var perInPxVer = this._topPerc / pos.top;
-  var pxInPerVer = pos.top / this._topPerc;
-
-  return perInPxVer * pixels;
-}
-
-Battlefield.prototype.percentsToPixelsHor = function (percents) {
-  var pos = $("#battlefield").position();
-
-  // horizontal
-  var perInPxHor = this._leftPerc / pos.left;
-  var pxInPerHor = pos.left / this._leftPerc;
-
-  return pxInPerHor * percents;
-}
-
-Battlefield.prototype.percentsToPixelVer = function (percents) {
-  var pos = $("#battlefield").position();
-
-  // vertical
-  var perInPxVer = this._topPerc / pos.top;
-  var pxInPerVer = pos.top / this._topPerc;
-
-  return pxInPerVer * percents;
-}
-
 Battlefield.prototype.checkWalls = function (left, top) {
   var bf = this;
   return this._walls.some(function(wall) {
@@ -183,12 +146,9 @@ Battlefield.prototype.isTankInRect = function (wall, left, top, width, height) {
 Battlefield.prototype.isPointInRect = function (wall, left, top) {
   wall.width;
   wall.height;
-  // var leftPx = this.percentsToPixelsHor(wall.leftPerc);
-  // var topPx = this.percentsToPixelVer(wall.topPerc);
 
-
-  if((top > wall.top && top < wall.top + wall.height)
-    && (left > wall.left && left < wall.left + wall.width)) {
+  if((top >= wall.top && top <= wall.top + wall.height)
+    && (left >= wall.left && left <= wall.left + wall.width)) {
     return true;
   }
 
