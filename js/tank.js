@@ -11,8 +11,7 @@ var DIRECTION = {
 // tank dimensions
 var TANK_DIMS = {
   WIDTH: 60,
-  HEIGHT: 60
-}
+  HEIGHT: 60}
 
 function Tank(startPos, battlefield) {
   var tank = $("<div>", {id: "tank"});
@@ -84,11 +83,12 @@ Tank.prototype.move = function (dir) {
   this.turn(dir);
 
   // if tank has turned - return
-  if(dir != oldDir)
+  if(dir != oldDir){
     return;
+  }
 
   var dirStr,
-      moveDist = 5;
+      moveDist = 20;
 
   switch (dir) {
     case DIRECTION.UP:
