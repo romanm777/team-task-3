@@ -73,6 +73,10 @@ Tank.prototype.turn = function (dir) {
 //this._tank.css('background-image', dirData.staticPic);
 }
 
+Tank.prototype.getDir = function () {
+  return this._dir;
+}
+
 Tank.prototype.move = function (dir) {
   var oldDir = this._dir;
 
@@ -89,7 +93,10 @@ Tank.prototype.move = function (dir) {
   switch (dir) {
     case DIRECTION.UP:
       dirStr = "top";
-      moveDist *= -2;
+      moveDist *= -1;
+      break;
+    case DIRECTION.RIGHT:
+      dirStr = "left";
       break;
     case DIRECTION.DOWN:
       dirStr = "top";
@@ -102,9 +109,13 @@ Tank.prototype.move = function (dir) {
       dirStr = "top"
   }
 
+  $("#tank").css("background-image", "url('./img/tank_move_up.gif')");
   setTimeout(function() {
-    $("#tank").css("url('./img/tank_up_move.gif')");;
+    $("#tank").css("background-image", "url('./img/tank_up.gif')");;
   }, 400);
+
+  var left = $("#tank").css("left");
+  var top = $("#tank").css("top");
 
   if(this._battlefield.canMove(left, top, dir, moveDist)) {
     $("#tank").css(dirStr, function(index) {
@@ -154,7 +165,7 @@ Tank.prototype._calcTurn = function (oldDir, dir) {
         turnCoef = 1;
         break;
       case 2:
-        turnCoef = 4;
+        turnCoef = 2;
         break;
       case 3:
         turnCoef = -1;
@@ -174,10 +185,10 @@ Tank.prototype._calcTurn = function (oldDir, dir) {
         turnCoef = 1;
         break;
       case 2:
-        turnCoef = 2;
+        turnCoef = -2;
         break;
       case 3:
-        turnCoef = 1;
+        turnCoef = -1;
         break;
       default:
 

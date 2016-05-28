@@ -6,15 +6,20 @@ function Battlefield(width, height) {
   this._height = height;
   //this._walls = new Walls();
 
-  this._left = 203;
-  this._top = 52;
+  this._left = 200;
+  this._top = 50;
 
   this._battlefield = $("<div>", {id: "battlefield"});
   this._battlefield.css({
     "width": this._width + "px",
     "height": this._height + "px",
-    "min-width": this._width + "px"
+    "min-width": this._width + "px",
     //"background-image": "url('./img/battlefield.jpg')",
+    "background-color": "black",
+    "left": this._left + "px",
+    "top": this._top + "px",
+    "position": "fixed",
+    "z-index": "-2"
   });
 
   $(document.body).append(this._battlefield);
@@ -28,7 +33,7 @@ Battlefield.prototype.getStartPosition = function (tankWidth, tankHeight) {
   this._tankWidth = tankWidth;
   this._tankHeight = tankHeight;
 
-  var leftPos = this._width / 2;
+  var leftPos = this._width / 2 + this._tankWidth / 2;
   var topPos = this._height - this._tankHeight;
 
   return {
@@ -38,7 +43,7 @@ Battlefield.prototype.getStartPosition = function (tankWidth, tankHeight) {
   };
 }
 
-Battlefield.prototype.canMove = function(leftStr, offset) {
+Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
   var left = parseInt(leftStr);
   var top = parseInt(topStr);
 
@@ -50,14 +55,14 @@ Battlefield.prototype.canMove = function(leftStr, offset) {
       }
       break;
     case DIRECTION.RIGHT:
-      var newRight = this._tankWidth + offset;
-      if(newRight > this._width) {
+      var newRight = left + this._tankWidth + offset;
+      if(newRight > this._width || this.checkWalls(left + offset, top)) {
         return false;
       }
       break;
     case DIRECTION.DOWN:
-      var newDown = this._tankHeight + offset;
-      if(newDown > this._height)) {
+      var newDown = top + this._tankHeight + offset;
+      if(newDown > this._height || this.checkWalls(left, top + offset)) {
         return false;
       }
       break;
@@ -79,17 +84,17 @@ Battlefield.prototype.makeTestRoads = function () {
   var pos = $("#battlefield").position();
 
   for(var i = 0; i < 4; ++i) {
-    this.createWall(70 * i, 72);
+    this.createWall(69, 69, 70 * i, 72);
   }
 
   for(var i = 0; i < 4; ++i) {
-    this.createWall(630 - 70 * i, 72);
+    this.createWall(69, 69, 630 - 70 * i, 72);
   }
 
-  this.createWall(180, 200);
-  this.createWall(250, 200);
-  this.createWall(250, 270);
-  this.createWall(this._width - 70, this._height - 70);
+  this.createWall(70, 70, 180, 200);
+  this.createWall(70, 70, 250, 200);
+  this.createWall(70, 70, 250, 270);
+  this.createWall(70, 70, this._width - 70, this._height - 70);
 }
 
 Battlefield.prototype.createWall = function (width, height, left, top) {
