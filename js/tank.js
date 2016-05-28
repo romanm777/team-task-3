@@ -197,3 +197,26 @@ Tank.prototype._calcTurn = function (oldDir, dir) {
 
   return 90 * turnCoef;
 }
+
+Tank.prototype.stopMove = function (dir) {
+  // sets "stay" state
+  $("#tank").css("background-image", "url('./img/tank_up.gif')");
+
+  $("#drive")[0].pause();
+  $("#idling")[0].play();
+}
+
+Tank.prototype.appendSounds = function () {
+  var idlingAudio = $("<audio>", {
+    id: "idling",
+    src: "./sound/idling.wav",
+    loop: "loop"
+  });
+
+  $(document.body).append(idlingAudio);
+
+  var driveAudio = $("<audio>", {
+    id: "drive",
+    src: "./sound/drive.wav",
+    loop: "loop"
+  });
