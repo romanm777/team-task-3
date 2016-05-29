@@ -9,35 +9,78 @@ var DIRECTION = {
 }
 
 // tank dimensions
-var TANK_DIMS = {
-  WIDTH: 60,
-  HEIGHT: 60
-}
+var TANK_SIZE_COEF = 0.1;
 
-function Tank(startPos, battlefield) {
+function Tank(params, battlefield) {
+  this._params = params;
+  this._battlefield = battlefield;
+
+  var side = this.calcSide();
+  var pos = this._battlefield.getTankStartPos(side, side);
+
   // tank picture
   var tank = $("<div>", {id: "tank"});
   tank.css({
-    "width": TANK_DIMS.WIDTH + "px",
-    "height": TANK_DIMS.HEIGHT + "px",
+    "width": side + "px",
+    "height": side + "px",
     "background-image": "url('./img/tank_up.gif')",
+    "background-size": "100% 100%",//side + "px" + side + "px",
     "transition": "all 0.1s ease-out 0s",
     "position": "relative",
-    "top": startPos.top + "px",
-    "left": startPos.left + "px"
+    "top": pos.top + "px",
+    "left": pos.left + "px"
     //"border": "0.5px solid green"
   });
 
-  $("#" + startPos.id).append(tank);
+  $("#" + pos.id).append(tank);
+
+  // saves size coefficients
+  this.saveSizeCoef();
 
   // default direction
   this._dir = DIRECTION.UP;
-  // battlefield
-  this._battlefield = battlefield;
 
   // sounds
   this.appendSounds();
   this.playIdling();
+}
+
+Tank.prototype.calcSide = function () {
+  // tank side
+  var bfParams = this._battlefield.formSizeParams();
+  return this._params.tankSideCoef * bfParams.side;
+}
+
+Tank.prototype.saveSizeCoef = function () {
+  var bfParams = this._battlefield.formSizeParams();
+
+  var side = parseFloat($("#tank").css("width"));
+  var left = parseFloat($("#tank").css("left"));
+  var top = parseFloat($("#tank").css("top"));
+
+  this._dims = {
+    'widthCoef': side / bfParams.side,
+    'heightCoef': side / bfParams.side,
+    'leftCoef': left / side,
+    'topCoef': top / side
+  };
+}
+
+Tank.prototype.setSize = function (params) {
+  this._params = params;
+  var sizeParams = this._battlefield.formSizeParams();
+
+  var tWidth = this._dims.widthCoef * sizeParams.side;
+  var tHeight = tWidth;
+  var tLeft = this._dims.leftCoef * tWidth;
+  var tTop = this._dims.topCoef * tHeight;
+
+  $("#tank").css({
+    width: tWidth + "px",
+    height: tHeight + "px",
+    left: tLeft + "px",
+    top: tTop + "px"
+  });
 }
 
 Tank.prototype.turn = function (dir) {
@@ -98,8 +141,10 @@ Tank.prototype.move = function (dir) {
 
   if(this._battlefield.canMove(left, top, dir, moveDist)) {
     $("#tank").css(dirStr, function(index) {
-      return (parseInt($("#tank").css(dirStr)) + moveDist) + 'px';
+      return (parseFloat($("#tank").css(dirStr)) + moveDist) + 'px';
     });
+
+    this.saveSizeCoef();
   }
 };
 
