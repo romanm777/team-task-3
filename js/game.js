@@ -1,3 +1,4 @@
+
 $(document).ready(function () {
   var game = new Game();
 
@@ -25,14 +26,34 @@ var KEYCODE_LEFT = 37,
 
 function Game() {
   $(document.body).css({
-    "background-color": "grey"
+    backgroundColor: "grey"
   });
 
-  this._battlefield = new Battlefield(700, 700);
-  var pos = this._battlefield.getStartPosition(TANK_DIMS.WIDTH, TANK_DIMS.HEIGHT);
+  var params = this.formResizeParams();
+  this._battlefield = new Battlefield(params);
 
   // init position and // callback to check if move is possible
-  this._tank = new Tank(pos, this._battlefield);
+  this._tank = new Tank(params, this._battlefield);
+
+  // sets window resize handler
+  var game = this;
+  $(window).resize(function() {
+    // calculates and sets battlefield params
+    var resParams = game.formResizeParams();
+    game._battlefield.setSize(resParams);
+
+    // sets tank params
+    game._tank.setSize(resParams);
+  });
+}
+
+Game.prototype.formResizeParams = function () {
+  return {
+    wndWidth: $(window).width(),
+    wndHeight: $(window).height(),
+    marginTopBotCoef: 0.1,
+    tankSideCoef: 0.1
+  };
 }
 
 Game.prototype.onKeyDown = function (e) {
