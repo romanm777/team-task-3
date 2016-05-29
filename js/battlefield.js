@@ -133,28 +133,59 @@ Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
   return true;
 }
 
-Battlefield.prototype.createWall = function (width, height, left, top) {
-  // var leftPerc = this._leftPerc + this.pixelsToPercentsHor(left);
-  // var topPerc = this._topPerc + this.pixelsToPercentsVer(top);
+Battlefield.prototype.getWallCoef = function () {
+  return 0.1;
+}
 
-  var wall = $("<div>");
+Battlefield.prototype.makeTestRoads = function () {
+  // form sizing params from input params
+  var sizeParams = this.formSizeParams();
+  var blockWidth = this.getWallCoef() * sizeParams.side;
+  var blockHeight = blockWidth;
+
+  // for(var i = 0; i < 4; ++i) {
+  //   this.createWall(blockWidth, blockHeight, blockWidth * i, blockHeight + 1);
+  // }
+  //
+  // for(var i = 0; i < 4; ++i) {
+  //   this.createWall(blockWidth, blockHeight, (sizeParams.side - blockWidth) - blockWidth * i, blockHeight + 1);
+  // }
+
+  this.createWall(blockWidth, blockHeight, 3 * blockWidth, 4 * blockHeight);
+  // this.createWall(blockWidth, blockHeight, 4 * blockWidth, 4 * blockHeight);
+  // this.createWall(blockWidth, blockHeight, 4 * blockWidth, 5 * blockHeight);
+  // this.createWall(blockWidth, blockHeight, this._side - blockWidth, this._side - blockHeight);
+}
+
+Battlefield.prototype.uniqueWallId = function () {
+  return "wall" + idCount++;
+}
+
+Battlefield.prototype.createWall = function (width, height, left, top) {
+  var sizeParams = this.formSizeParams();
+  var wId = this.uniqueWallId();
+
+  var wall = $("<div>", {id: wId});
   wall.css({
-    "width": width + "px",
-    "height": height + "px",
-    "background-image": "url('./img/battlefield.jpg')",
-    "left": left + this._left + "px",
-    "top": top + this._top + "px",
-    "position": "fixed",
-    "z-index": "-1"
+    width: width + "px",
+    height: height + "px",
+    backgroundImage: "url('./img/battlefield.jpg')",
+    backgroundSize: "1000% 1000%",
+    left: left + sizeParams.left + "px",
+    top: top + sizeParams.top + "px",
+    position: "fixed",
+    zIndex: "-1"
   });
 
   $("#battlefield").append(wall);
 
+  // saves wall sizes to battlefield ones ratio
   this._walls.push({
-    'width': width,
-    'height': height,
-    'left': left,
-    'top': top
+    'id': wId,
+    'widthCoef': width / sizeParams.side,
+    'heightCoef': height / sizeParams.side,
+    'leftCoef': left / sizeParams.side,
+    'topCoef': top / sizeParams.side
   });
 }
 
@@ -177,13 +208,22 @@ Battlefield.prototype.isTankInRect = function (wall, left, top, width, height) {
 }
 
 Battlefield.prototype.isPointInRect = function (wall, left, top) {
-  wall.width;
-  wall.height;
+  var sizeParams = this.formSizeParams();
+  var wallParams = this.calcWallParams(sizeParams, wall);
 
-  if((top >= wall.top && top <= wall.top + wall.height)
-    && (left >= wall.left && left <= wall.left + wall.width)) {
+  if((top >= wallParams.top && top <= wallParams.top + wallParams.height)
+    && (left >= wallParams.left && left <= wallParams.left + wallParams.width)) {
     return true;
   }
 
   return false;
+}
+
+Battlefield.prototype.calcWallParams = function (sizeParams, wall) {
+  return {
+    width: wall.widthCoef * sizeParams.side,
+    height: wall.heightCoef * sizeParams.side,
+    left: wall.leftCoef * sizeParams.side,
+    top: wall.topCoef * sizeParams.side
+  };
 }
