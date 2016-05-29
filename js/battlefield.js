@@ -1,40 +1,91 @@
 ////////////////////////////////////////////////////////////////////
+var idCount = 0;
 
+function Battlefield(params) {
+  this._params = params;
 
-function Battlefield(width, height) {
-  this._width = width;
-  this._height = height;
-  //this._walls = new Walls();
-
-  this._left = 200;
-  this._top = 50;
+  // form sizing params from input params
+  var sizeParams = this.formSizeParams();
 
   this._battlefield = $("<div>", {id: "battlefield"});
   this._battlefield.css({
-    "width": this._width + "px",
-    "height": this._height + "px",
-    "min-width": this._width + "px",
+    width: sizeParams.side + "px",
+    height: sizeParams.side + "px",
+    minWidth: sizeParams.side + "px",
     //"background-image": "url('./img/battlefield.jpg')",
-    "background-color": "black",
-    "left": this._left + "px",
-    "top": this._top + "px",
-    "position": "fixed",
-    "z-index": "-2"
+    backgroundColor: "black",
+    left: sizeParams.left + "px",
+    top: sizeParams.top + "px",
+    position: "fixed",
+    zIndex: "-2"
   });
 
   $(document.body).append(this._battlefield);
 
+  // init walls
   this._walls = [];
 
   this.makeTestRoads(); // debug
 }
 
-Battlefield.prototype.getStartPosition = function (tankWidth, tankHeight) {
+Battlefield.prototype.formSizeParams = function () {
+  // battlefield side
+  var bfSide = this._params.wndHeight - (this._params.wndHeight * this._params.marginTopBotCoef * 2);
+
+  return {
+    side: bfSide,
+    left: (this._params.wndWidth - bfSide) / 2,
+    top: (this._params.wndHeight - bfSide) / 2
+  };
+}
+
+Battlefield.prototype.getSize = function () {
+  return {
+    side: this._side,
+    left: this._left,
+    top: this._top
+  }
+}
+
+Battlefield.prototype.setSize = function (params) {
+  this._params = params;
+  // form sizing params from input params
+  var sizeParams = this.formSizeParams();
+
+  $("#battlefield").css({
+    width: sizeParams.side + "px",
+    height: sizeParams.side + "px",
+    minWidth: sizeParams.side + "px",
+    left: sizeParams.left + "px",
+    top: sizeParams.top + "px"
+  });
+
+  this.setWallSize(sizeParams);
+}
+
+Battlefield.prototype.setWallSize = function (sizeParams) {
+  this._walls.forEach(function(wall) {
+    var $wall = $("#" + wall.id);
+    $wall.css({
+      width: wall.widthCoef * sizeParams.side + "px",
+      height: wall.heightCoef * sizeParams.side + "px",
+      left: sizeParams.left + wall.leftCoef * sizeParams.side + "px",
+      top: sizeParams.top + wall.topCoef * sizeParams.side + "px"
+    });
+  });
+}
+
+var TRIDENT_PLACE_COEF = 0.25;
+
+Battlefield.prototype.getTankStartPos = function (tankWidth, tankHeight) {
   this._tankWidth = tankWidth;
   this._tankHeight = tankHeight;
 
-  var leftPos = this._width / 2 + this._tankWidth / 2;
-  var topPos = this._height - this._tankHeight;
+  var sizeParams = this.formSizeParams();
+
+  var withoutTrident = sizeParams.side - sizeParams.side * TRIDENT_PLACE_COEF;
+  var leftPos = (withoutTrident / 2 - this._tankWidth) + sizeParams.left;
+  var topPos = sizeParams.side - this._tankHeight;
 
   return {
     id: "battlefield",
@@ -44,8 +95,10 @@ Battlefield.prototype.getStartPosition = function (tankWidth, tankHeight) {
 }
 
 Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
-  var left = parseInt(leftStr);
-  var top = parseInt(topStr);
+  var left = parseFloat(leftStr);
+  var top = parseFloat(topStr);
+
+  var sizeParams = this.formSizeParams();
 
   switch (dir) {
     case DIRECTION.UP:
@@ -56,13 +109,13 @@ Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
       break;
     case DIRECTION.RIGHT:
       var newRight = left + this._tankWidth + offset;
-      if(newRight > this._width || this.checkWalls(left + offset, top)) {
+      if(newRight > sizeParams.side || this.checkWalls(left + offset, top)) {
         return false;
       }
       break;
     case DIRECTION.DOWN:
       var newDown = top + this._tankHeight + offset;
-      if(newDown > this._height || this.checkWalls(left, top + offset)) {
+      if(newDown > sizeParams.side || this.checkWalls(left, top + offset)) {
         return false;
       }
       break;
@@ -78,26 +131,6 @@ Battlefield.prototype.canMove = function(leftStr, topStr, dir, offset) {
   }
 
   return true;
-}
-
-Battlefield.prototype.makeTestRoads = function () {
-  var blockWidth = 60;
-  var blockHeight = 60;
-
-  var pos = $("#battlefield").position();
-
-  for(var i = 0; i < 4; ++i) {
-    this.createWall(blockWidth, blockHeight, 60 * 0, blockHeight + 4);
-  }
-
-  for(var i = 0; i < 4; ++i) {
-    this.createWall(blockWidth, blockHeight, 640 - blockWidth * i, blockHeight + 4);
-  }
-
-  this.createWall(blockWidth, blockHeight, 180, 200);
-  this.createWall(blockWidth, blockHeight, 240, 200);
-  this.createWall(blockWidth, blockHeight, 240, 260);
-  this.createWall(blockWidth, blockHeight, this._width - blockWidth, this._height - blockHeight);
 }
 
 Battlefield.prototype.createWall = function (width, height, left, top) {
