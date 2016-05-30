@@ -8,18 +8,17 @@ var DIRECTION = {
   LEFT: 3
 }
 
-// tank dimensions
-var TANK_SIZE_COEF = 0.1;
+var MOVE_DIST = 8;
 
-function Tank(params, battlefield) {
-  this._params = params;
+function Tank(sizeCoef, battlefield) {
+  this._sizeCoef = sizeCoef;
   this._battlefield = battlefield;
 
-  var side = this.calcSide();
-  var pos = this._battlefield.getTankStartPos(side, side);
+  var side = this._battlefield.getDims().side * this._sizeCoef;
+  var pos = this._battlefield.getMainTankStart(side, side);
 
   // tank picture
-  var tank = $("<div>", {id: "tank"});
+  var tank = $("<div>", {id: this.getId()});
   tank.css({
     "width": side + "px",
     "height": side + "px",
@@ -34,8 +33,12 @@ function Tank(params, battlefield) {
 
   $("#" + pos.id).append(tank);
 
-  // saves size coefficients
-  this.saveSizeCoef();
+  this.saveDims({
+    width: side,
+    height: side,
+    left: pos.left,
+    top: pos.top
+  });
 
   // default direction
   this._dir = DIRECTION.UP;
@@ -45,43 +48,27 @@ function Tank(params, battlefield) {
   this.playIdling();
 }
 
-Tank.prototype.calcSide = function () {
-  // tank side
-  var bfParams = this._battlefield.formSizeParams();
-  return this._params.tankSideCoef * bfParams.side;
+/////////////////////////////////////////////////
+///           Tank params
+Tank.prototype.getId = function () {
+  return "tank";
 }
 
-Tank.prototype.saveSizeCoef = function () {
-  var bfParams = this._battlefield.formSizeParams();
-
-  var side = parseFloat($("#tank").css("width"));
-  var left = parseFloat($("#tank").css("left"));
-  var top = parseFloat($("#tank").css("top"));
-
-  this._dims = {
-    'widthCoef': side / bfParams.side,
-    'heightCoef': side / bfParams.side,
-    'leftCoef': left / side,
-    'topCoef': top / side
-  };
+Tank.prototype.getSizeCoef = function () {
+  return this._sizeCoef;
 }
 
-Tank.prototype.setSize = function (params) {
-  this._params = params;
-  var sizeParams = this._battlefield.formSizeParams();
-
-  var tWidth = this._dims.widthCoef * sizeParams.side;
-  var tHeight = tWidth;
-  var tLeft = this._dims.leftCoef * tWidth;
-  var tTop = this._dims.topCoef * tHeight;
-
-  $("#tank").css({
-    width: tWidth + "px",
-    height: tHeight + "px",
-    left: tLeft + "px",
-    top: tTop + "px"
-  });
+// Tank dimensions { width: [some], height: [some], left: [some], top: [some] }
+Tank.prototype.getDims = function () {
+  return this._dims;
 }
+
+Tank.prototype.saveDims = function (dims) {
+  this._dims = dims;
+}
+
+////////////////////////////////////////////////
+///           Moving methods
 
 Tank.prototype.turn = function (dir) {
   var oldDir = this._dir;
@@ -111,8 +98,8 @@ Tank.prototype.move = function (dir) {
   if(dir != oldDir)
     return;
 
-  var dirStr,
-      moveDist = 5;
+  var dirStr;
+      moveDist = this._battlefield.getDims().side * 0.019;
 
   switch (dir) {
     case DIRECTION.UP:
@@ -139,12 +126,17 @@ Tank.prototype.move = function (dir) {
   var left = $("#tank").css("left");
   var top = $("#tank").css("top");
 
+  // should replace canMove() in future
+  var newMoveDist = this._battlefield.calcMoveDist(left, top, dir, moveDist);
+
   if(this._battlefield.canMove(left, top, dir, moveDist)) {
+    var offset = parseFloat($("#tank").css(dirStr)) + moveDist;
     $("#tank").css(dirStr, function(index) {
-      return (parseFloat($("#tank").css(dirStr)) + moveDist) + 'px';
+      return offset + 'px';
     });
 
-    this.saveSizeCoef();
+    this._dims[dirStr] = offset;
+    //this.saveSizeCoef();
   }
 };
 
@@ -229,6 +221,9 @@ Tank.prototype.stopMove = function (dir) {
   $("#drive")[0].pause();
   $("#idling")[0].play();
 }
+
+////////////////////////////////////////////////////////
+///             Sound methods
 
 Tank.prototype.appendSounds = function () {
   var idlingAudio = $("<audio>", {

@@ -29,59 +29,43 @@ function Game() {
     backgroundColor: "grey"
   });
 
-  var params = this.formResizeParams();
-  this._battlefield = new Battlefield(params);
+  var tankSizeCoef = 0.09;
+  var minMarginCoef = 0.05;
 
-  // init position and // callback to check if move is possible
-  this._tank = new Tank(params, this._battlefield);
+  // creates battlefield with tank
+  this._battlefield = new Battlefield(minMarginCoef);
+  this._battlefield.appendMainTank(new Tank(tankSizeCoef, this._battlefield));
 
-  // sets window resize handler
-  var game = this;
-  $(window).resize(function() {
-    // calculates and sets battlefield params
-    var resParams = game.formResizeParams();
-    game._battlefield.setSize(resParams);
-
-    // sets tank params
-    game._tank.setSize(resParams);
-  });
-}
-
-Game.prototype.formResizeParams = function () {
-  return {
-    wndWidth: $(window).width(),
-    wndHeight: $(window).height(),
-    marginTopBotCoef: 0.1,
-    tankSideCoef: 0.1
-  };
+  // init game resizer
+  this._resizer = new Resizer(this._battlefield);
 }
 
 Game.prototype.onKeyDown = function (e) {
   if (e.keyCode == KEYCODE_LEFT) {
-    this._tank.move(DIRECTION.LEFT);
+    this._battlefield.move(DIRECTION.LEFT);
   }
   else if (e.keyCode == KEYCODE_RIGHT) {
-    this._tank.move(DIRECTION.RIGHT);
+    this._battlefield.move(DIRECTION.RIGHT);
   }
   else if (e.keyCode == KEYCODE_UP) {
-    this._tank.move(DIRECTION.UP);
+    this._battlefield.move(DIRECTION.UP);
   }
   else if (e.keyCode == KEYCODE_DOWN) {
-    this._tank.move(DIRECTION.DOWN);
+    this._battlefield.move(DIRECTION.DOWN);
   }
 }
 
 Game.prototype.onKeyUp = function (e) {
   if (e.keyCode == KEYCODE_LEFT) {
-    this._tank.stopMove(DIRECTION.LEFT);
+    this._battlefield.stopMove(DIRECTION.LEFT);
   }
   else if (e.keyCode == KEYCODE_RIGHT) {
-    this._tank.stopMove(DIRECTION.RIGHT);
+    this._battlefield.stopMove(DIRECTION.RIGHT);
   }
   else if (e.keyCode == KEYCODE_UP) {
-    this._tank.stopMove(DIRECTION.UP);
+    this._battlefield.stopMove(DIRECTION.UP);
   }
   else if (e.keyCode == KEYCODE_DOWN) {
-    this._tank.stopMove(DIRECTION.DOWN);
+    this._battlefield.stopMove(DIRECTION.DOWN);
   }
 }
