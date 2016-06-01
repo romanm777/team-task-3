@@ -34,15 +34,15 @@ function Tank(sizeCoef, battlefield) {
 
   $("#" + pos.id).append(tank);
 
+  // creates tank moving navigator
+  this._navigator = new Navigator(side, side, battlefield);
+
   this.saveDims({
     width: side,
     height: side,
     left: pos.left,
     top: pos.top
   });
-
-  // creates tank moving navigator
-  this._navigator = new Navigator(side, side, bfDims, battlefield.getWalls());
 
   // default direction
   this._dir = DIRECTION.UP;
@@ -69,6 +69,7 @@ Tank.prototype.getDims = function () {
 
 Tank.prototype.saveDims = function (dims) {
   this._dims = dims;
+  this._navigator.setTankSize(dims.width, dims.height);
 }
 
 ////////////////////////////////////////////////

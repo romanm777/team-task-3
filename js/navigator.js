@@ -1,11 +1,10 @@
 /////////////////////////////////////////////////
 ///     Represents tank moving navigator
 
-function Navigator(tankWidth, tankHeight, bfDims, walls) {
-  this._walls = walls;
+function Navigator(tankWidth, tankHeight, battlefield) {
   this._tankWidth = tankWidth;
   this._tankHeight = tankHeight;
-  this._dims = bfDims;
+  this._battlefield = battlefield;
 
   this._allowOffsetCoef = 0.12;
 }
@@ -14,6 +13,8 @@ function Navigator(tankWidth, tankHeight, bfDims, walls) {
 // returns true
 //
 Navigator.prototype.calcMovePos = function (pos, dir, moveDist, newPos) {
+  var dims = this._battlefield.getDims();
+
   switch (dir) {
     case DIRECTION.UP:
       var newUp = pos.top + moveDist;
@@ -23,13 +24,13 @@ Navigator.prototype.calcMovePos = function (pos, dir, moveDist, newPos) {
       break;
     case DIRECTION.RIGHT:
       var newRight = pos.left + this._tankWidth + moveDist;
-      if(newRight > this._dims.side || !this._correctTankHorMove(pos.left + moveDist, pos.top, newPos)) {
+      if(newRight > dims.side || !this._correctTankHorMove(pos.left + moveDist, pos.top, newPos)) {
         return false;
       }
       break;
     case DIRECTION.DOWN:
       var newDown = pos.top + this._tankHeight + moveDist;
-      if(newDown > this._dims.side || !this._correctTankVerMove(pos.left, pos.top + moveDist, newPos)) {
+      if(newDown > dims.side || !this._correctTankVerMove(pos.left, pos.top + moveDist, newPos)) {
         return false;
       }
       break;
@@ -45,6 +46,12 @@ Navigator.prototype.calcMovePos = function (pos, dir, moveDist, newPos) {
   }
 
   return true;
+}
+
+// sets new tank dimensions (when resized)
+Navigator.prototype.setTankSize = function (width, height) {
+  this._tankWidth = width;
+  this._tankHeight = height;
 }
 
 //////////////////////////////////////////////////////
@@ -112,8 +119,9 @@ Navigator.prototype._correctTankHorMove = function (left, top, newPos) {
 
 Navigator.prototype._isTankInWalls = function (left, top) {
   var nv = this;
+  var walls = this._battlefield.getWalls();
 
-  return this._walls.some(function(wall) {
+  return walls.some(function(wall) {
     // tank can move through forest
     if(wall.getIdPrefix() == "forest") {
       return false;
