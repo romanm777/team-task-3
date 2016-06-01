@@ -95,8 +95,8 @@ Tank.prototype.move = function (dir) {
   this.turn(dir);
 
   // sets sounds
-  $("#idling")[0].pause();
-  $("#drive")[0].play();
+  this._idlingAudio[0].pause();
+  this._driveAudio[0].play();
 
   // if tank has turned - return
   if(dir != oldDir)
@@ -240,32 +240,27 @@ Tank.prototype.stopMove = function (dir) {
   // sets "stay" state
   $("#tank").css("background-image", "url('./img/tank_up.gif')");
 
-  $("#drive")[0].pause();
-  $("#idling")[0].play();
+  this._driveAudio[0].pause();
+  this._idlingAudio[0].play();
 }
 
 ////////////////////////////////////////////////////////
 ///             Sound methods
 
 Tank.prototype.appendSounds = function () {
-  var idlingAudio = $("<audio>", {
+  this._idlingAudio = $("<audio>", {
     id: "idling",
     src: "./sound/idling.wav",
     loop: "loop"
   });
 
-  $(document.body).append(idlingAudio);
-
-  var driveAudio = $("<audio>", {
+  this._driveAudio = $("<audio>", {
     id: "drive",
     src: "./sound/drive.wav",
     loop: "loop"
   });
-
-  $(document.body).append(driveAudio);
-  //$(document.body).append(<audio src='aaa.mp3' autoplay></audio>)
 }
 
 Tank.prototype.playIdling = function () {
-  $("#idling")[0].play();
+  this._idlingAudio[0].play();
 }
